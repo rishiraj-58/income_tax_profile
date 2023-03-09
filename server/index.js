@@ -1,6 +1,6 @@
 const express = require('express');
 const mysql = require('mysql');
-const phone = require('phone');
+const validatePhoneNumber = require('validate-phone-number-node-js');
 const aadhaarValidator = require('aadhaar-validator');
 const cors = require("cors");
 
@@ -30,9 +30,9 @@ connection.connect((err) => {
 });
 
 // function to validate phone number
-function validatePhoneNumber(phoneNumber) {
-  const result = phone(phoneNumber, 'IN');
-  return result.length > 0 && result[0] !== null;
+function validatePhoneNumbers(phoneNumber) {
+    const result = validatePhoneNumber.validate(phoneNumber);
+    return result
 }
 
 // function to validate PAN number
@@ -51,7 +51,7 @@ app.post('/users', (req, res) => {
   const { name, age, phone_number, pan_number, aadhaar_number, state } = req.body;
 
   // validate phone number, PAN number, and Aadhaar number
-  if (!validatePhoneNumber(phone_number)) {
+  if (!validatePhoneNumbers(phone_number)) {
     return res.status(400).json({ error: 'Invalid phone number!' });
   }
 
